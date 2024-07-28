@@ -1,0 +1,6 @@
+@thetaedgecloud_the_ai_factor_HostAddress = http://localhost:5093
+
+GET {{thetaedgecloud_the_ai_factor_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
