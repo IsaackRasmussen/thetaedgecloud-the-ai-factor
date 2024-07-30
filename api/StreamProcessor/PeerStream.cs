@@ -1,3 +1,4 @@
+using Microsoft.CognitiveServices.Speech;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using thetaedgecloud_the_ai_factor.MachineLearning;
@@ -21,9 +22,11 @@ public class PeerStream
         var promptApiBaseUrl = configuration["Cloudflare:AI:ApiUrl"];
 
         _aiAssistants.Add(new AiAssistant(promptApiBaseUrl, configuration["Cloudflare:AI:TokenSecret"],
-            "You are an impatient judge in a music competition. You comment the performance of the artist playing with one short sentence.", "Julie"));
+            "You are an impatient judge in a music competition. You comment the performance of the artist playing with one short sentence.",
+            "Julie"));
         _aiAssistants.Add(new AiAssistant(promptApiBaseUrl, configuration["Cloudflare:AI:TokenSecret"],
-            "You are a very helpful judge in a music competition. You give suggestions to the artist playing for how to improve with one short sentence.","Andrew"));
+            "You are a very helpful judge in a music competition. You give suggestions to the artist playing for how to improve with one short sentence.",
+            "Andrew"));
     }
 
     public async Task ProcessFrame(FileStream fileStream)
@@ -64,7 +67,10 @@ public class PeerStream
                         {
                             var promptResponse = await aiAssistant.Prompt(aiPrompt);
 
-                            AddEvent(PeerEventType.AIResponse, promptResponse.Result.Response);
+                            var pEvent = AddEvent(PeerEventType.AIResponse, promptResponse.Result.Response,
+                                aiAssistant.Name);
+                            await TextToSpeech(pEvent.Index, pEvent.Id,aiAssistant.Name,  promptResponse.Result.Response);
+
                             Console.WriteLine($"{aiAssistant.Name} Judge: {promptResponse.Result.Response} ");
                         }
                     });
@@ -78,17 +84,48 @@ public class PeerStream
 
     public IEnumerable<PeerEvent> GetEvents() => _peerEvents;
 
-    private void AddEvent(PeerEventType eventType, string eventObject)
+    private PeerEvent AddEvent(PeerEventType eventType, string eventObject, string source = null)
     {
         lock (_peerEvents)
         {
-            _peerEvents.Add(new PeerEvent()
+            var eventObj = new PeerEvent()
             {
                 EventObject = eventObject,
-                EventType = eventType
-            });
+                EventType = eventType,
+                EventSource = source,
+                Index = _peerEvents.Count
+            };
+
+            _peerEvents.Add(eventObj);
+
+            return eventObj;
         }
     }
 
     private int EventObjectSeenCount(string eventObject) => _peerEvents.Count(e => e.EventObject.Equals(eventObject));
+
+    private async Task TextToSpeech(int index, string id, string judgeName,string text)
+    {
+        try
+        {
+            var voiceSynthUrl = judgeName == "Andrew" ? "http://localhost:5000" : "http://localhost:5001";
+            
+            var config = SpeechConfig.FromHost(
+                new Uri(voiceSynthUrl));
+            config.SetSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Audio24Khz160KBitRateMonoMp3);
+
+            var synthesizer = new SpeechSynthesizer(config);
+
+            var result = await synthesizer.SpeakTextAsync(text);
+
+            using (var fStream = new FileStream($"./speeches/{index}_{id}.mp3", FileMode.Create))
+            {
+                await fStream.WriteAsync(result.AudioData, 0, result.AudioData.Length);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
 }
