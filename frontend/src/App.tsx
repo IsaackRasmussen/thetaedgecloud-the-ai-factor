@@ -1,35 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Route, Routes } from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0)
+import IndexPage from "@/pages/index";
+import DocsPage from "@/pages/docs";
+import PricingPage from "@/pages/pricing";
+import BlogPage from "@/pages/blog";
+import AboutPage from "@/pages/about";
+//import MultiStreamsMixer from 'multistreamsmixer';
+import RecordRTC, { invokeSaveAsDialog } from "recordrtc";
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+const WEBSOCKET_URL = "ws://127.0.0.1:8081/";
+
+var pc: RTCPeerConnection, ws: WebSocket;
+
+async function start(stream: MediaStream) {
+  pc = new RTCPeerConnection();
+
+  /*pc.ontrack = (evt) =>
+    (document.querySelector("#videoCtl").srcObject = evt.streams[0]);*/
+
+  pc.onicecandidate = (evt) =>
+    evt.candidate && ws.send(JSON.stringify(evt.candidate));
+
+  ws = new WebSocket(WEBSOCKET_URL, []);
+  ws.onmessage = async function (evt) {
+    var obj = JSON.parse(evt.data);
+    if (obj?.candidate) {
+      pc.addIceCandidate(obj);
+    } else if (obj?.sdp) {
+      await pc.setRemoteDescription(new RTCSessionDescription(obj));
+      pc.createAnswer()
+        .then((answer) => pc.setLocalDescription(answer))
+        .then(() => ws.send(JSON.stringify(pc.localDescription)));
+    }
+  };
 }
 
-export default App
+async function closePeer() {
+  await pc?.close();
+  await ws?.close();
+}
+
+navigator.mediaDevices
+  .getUserMedia({
+    video: true,
+    audio: true,
+  })
+  .then(async function (stream) {
+    await start(stream);
+
+    /*let recorder = new RecordRTC(stream, {
+      type: "video",
+    });
+    recorder.startRecording();
+    recorder.toURL();
+
+
+    const sleep = (m: any) => new Promise((r) => setTimeout(r, m));
+    await sleep(3000);
+
+    recorder.stopRecording(function () {
+      let blob = recorder.getBlob();
+      invokeSaveAsDialog(blob);
+    });*/
+  });
+
+function App() {
+  return (
+    <Routes>
+      <Route element={<IndexPage />} path="/" />
+      <Route element={<DocsPage />} path="/docs" />
+      <Route element={<PricingPage />} path="/pricing" />
+      <Route element={<BlogPage />} path="/blog" />
+      <Route element={<AboutPage />} path="/about" />
+    </Routes>
+  );
+}
+
+export default App;
