@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Modal,
   ModalContent,
@@ -6,12 +5,9 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  useDisclosure,
 } from "@nextui-org/react";
 
 const StreamPlayer = (props: any) => {
-  const [selectedColor, setSelectedColor] = React.useState("default");
-
   return (
     <Modal isOpen={props.isOpen}>
       <ModalContent>

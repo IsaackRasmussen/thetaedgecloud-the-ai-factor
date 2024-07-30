@@ -1,7 +1,4 @@
-import React from "react";
 import { useState } from "react";
-import confetti from "canvas-confetti";
-import { CameraIcon } from "./CameraIcon";
 import {
   Modal,
   ModalContent,
@@ -12,13 +9,13 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 //import MultiStreamsMixer from 'multistreamsmixer';
-import RecordRTC, { invokeSaveAsDialog } from "recordrtc";
+import RecordRTC from "recordrtc";
 
 var pc: RTCPeerConnection, ws: WebSocket;
 var recorderRtc: RecordRTC | undefined = undefined;
 var videoRef: any = undefined;
 
-async function start(stream: MediaStream) {
+async function start() {
   let peerConn = new RTCPeerConnection();
 
   /*peerConn.ontrack = (evt) => {
@@ -56,7 +53,7 @@ async function startShow() {
     })
     .then(async function (stream) {
       console.log("test2");
-      await start(stream);
+      await start();
 
       recorderRtc = new RecordRTC(stream, {
         type: "video",
@@ -76,10 +73,6 @@ async function stopShow() {
 const StartShowButton = () => {
   const [isRecording, setIsRecording] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [modalPlacement, setModalPlacement] = React.useState("auto");
-  const handleConfetti = () => {
-    //confetti({...});
-  };
 
   const handleRef = (video: any) => {
     videoRef = video;
@@ -95,7 +88,6 @@ const StartShowButton = () => {
         variant="bordered"
         onPress={onOpen}
       >
-        <CameraIcon width="100" height="100" />
         Create show!
       </Button>
 
@@ -106,7 +98,7 @@ const StartShowButton = () => {
         size="5xl"
       >
         <ModalContent>
-          {(onClose) => (
+          {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">
                 New Show
@@ -129,7 +121,7 @@ const StartShowButton = () => {
                   className="shadow-lg relative overflow-visible rounded-full hover:-translate-y-1 px-12 shadow-xl bg-background/30 after:content-[''] after:absolute after:rounded-full after:inset-0 after:bg-background/40 after:z-[-1] after:transition after:!duration-500 hover:after:opacity-0"
                   variant="bordered"
                   color="danger"
-                  onPress={(ev: any) => {
+                  onPress={() => {
                     if (isRecording) {
                       setIsRecording(false);
                       stopShow();
@@ -139,7 +131,6 @@ const StartShowButton = () => {
                     }
                   }}
                 >
-                  <CameraIcon size="100" />
                   {!isRecording ? "Start show!" : "Stop show"}
                 </Button>
               </ModalFooter>

@@ -4,7 +4,6 @@ import {
   CardFooter,
   Image,
   Button,
-  useDisclosure,
 } from "@nextui-org/react";
 import Lottie from "react-lottie-player";
 import offlineJson from "../../lottiefiles/offline.json";
@@ -12,7 +11,7 @@ import offlineJson from "../../lottiefiles/offline.json";
 // Import useSWR from swr package
 
 // created function to handle API request
-const fetcher = (...args: any) => fetch(...args).then((res) => res.json());
+const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).then((res) => res.json());
 
 const LiveShows = () => {
   const {
@@ -27,8 +26,6 @@ const LiveShows = () => {
   if (error) return <div className="failed">failed to load</div>;
   if (isValidating && !liveShows)
     return <div className="Loading">Loading...</div>;
-
-  //const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
     <div style={{ display: "flex", gap: "1em" }}>

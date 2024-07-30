@@ -1,4 +1,3 @@
-import React from "react";
 import useSWR from "swr";
 import {
   Table,
@@ -7,28 +6,16 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  RadioGroup,
-  Radio,
 } from "@nextui-org/react";
 import { DateInput } from "@nextui-org/react";
-import { now, parseAbsoluteToLocal } from "@internationalized/date";
-import { useDateFormatter } from "@react-aria/i18n";
+import { parseAbsoluteToLocal } from "@internationalized/date";
 
 // Import useSWR from swr package
 
 // created function to handle API request
-const fetcher = (...args: any) => fetch(...args).then((res) => res.json());
-const colors = [
-  "default",
-  "primary",
-  "secondary",
-  "success",
-  "warning",
-  "danger",
-];
+const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).then((res) => res.json());
 
 const PastShows = () => {
-  const [selectedColor, setSelectedColor] = React.useState("default");
   const {
     data: pastShows,
     error,
@@ -44,7 +31,6 @@ const PastShows = () => {
 
   return (
     <Table
-      color={selectedColor}
       selectionMode="single"
       defaultSelectedKeys={["2"]}
       aria-label="Example static collection table"

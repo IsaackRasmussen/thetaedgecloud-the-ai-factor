@@ -1,4 +1,3 @@
-import { Button } from "@nextui-org/button";
 import { Kbd } from "@nextui-org/kbd";
 import { Link } from "@nextui-org/link";
 import { Input } from "@nextui-org/input";
@@ -17,13 +16,8 @@ import clsx from "clsx";
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import {
-  TwitterIcon,
-  GithubIcon,
-  DiscordIcon,
-  HeartFilledIcon,
   SearchIcon,
 } from "@/components/icons";
-import { Logo } from "@/components/icons";
 
 export const Navbar = () => {
   const searchInput = (
@@ -75,9 +69,6 @@ export const Navbar = () => {
       ></NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <Link isExternal href={siteConfig.links.github}>
-          <GithubIcon className="text-default-500" />
-        </Link>
         <ThemeSwitch />
         <NavbarMenuToggle />
       </NavbarContent>
@@ -85,7 +76,7 @@ export const Navbar = () => {
       <NavbarMenu>
         {searchInput}
         <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
+          {siteConfig.navMenuItems.map((item:any, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
                 color={

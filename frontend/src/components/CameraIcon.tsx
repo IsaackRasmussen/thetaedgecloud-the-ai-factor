@@ -1,11 +1,14 @@
-import React from "react";
-export const CameraIcon = ({
+const CameraIcon = ()=>{
+  return <span/>;
+};
+
+/*({
   fill = "currentColor",
-  filled,
-  size,
-  height,
-  width,
-  label,
+  filled : any|undefined,
+  size : any|undefined,
+  height : any|undefined,
+  width : any|undefined,
+  label : any|undefined,
   ...props
 }) => {
   return (
@@ -25,4 +28,6 @@ export const CameraIcon = ({
       />
     </svg>
   );
-};
+};*/
+
+export default CameraIcon;
