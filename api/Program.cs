@@ -1,8 +1,11 @@
+using System.Diagnostics;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
 using LiveStreamingServerNet;
 using LiveStreamingServerNet.Flv.Installer;
 using LiveStreamingServerNet.Networking.Helpers;
+using Microsoft.CognitiveServices.Speech;
 using SIPSorcery.Media;
 using SIPSorcery.Net;
 using SIPSorceryMedia.Abstractions;
@@ -13,23 +16,6 @@ using WebSocketSharp.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*
-var sw1 = Stopwatch.StartNew();
-var config = SpeechConfig.FromHost(
-    new Uri("http://localhost:5000"));
-config.SetSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Audio24Khz160KBitRateMonoMp3);
-
-var synthesizer = new Microsoft.CognitiveServices.Speech.SpeechSynthesizer(config);
-var voices = await synthesizer.GetVoicesAsync();
-Console.WriteLine("Voices: "+ String.Join(',',voices.Voices.Select(v=>v.Name)));
-var result = await synthesizer.SpeakTextAsync("Hi, my name is Joe");
-Console.WriteLine("Made speech in: "+sw1.ElapsedMilliseconds);
-using (var fStream = new FileStream("speech.mp3", FileMode.Create))
-{
-    await fStream.WriteAsync(result.AudioData, 0, result.AudioData.Length);
-}
-
-
 var peer = new PeerStream(builder.Configuration);
 var fileBuffer = new byte[1024 * 1024];
 foreach (var fileName in Directory.GetFiles(@"C:\Users\Isaack\Downloads\videos\video-images", "*.jpg"))
@@ -37,7 +23,6 @@ foreach (var fileName in Directory.GetFiles(@"C:\Users\Isaack\Downloads\videos\v
     var sw = Stopwatch.StartNew();
     using(var imgFile = new FileStream(fileName,FileMode.Open))
     {
-        //var bytesRead = imgFile.ReadAsync(fileBuffer, 0, fileBuffer.Length);
         await peer.ProcessFrame(imgFile);
     }
     sw.Stop();
@@ -51,7 +36,8 @@ foreach (var fileName in Directory.GetFiles(@"C:\Users\Isaack\Downloads\videos\v
 
 Console.WriteLine("Finished");
 Console.WriteLine("Events: "+ JsonSerializer.Serialize(peer.GetEvents()));
-
+return;
+/*
 return;*/
 /*var imgClass = new ImageClassification();
 var sw = Stopwatch.StartNew();
