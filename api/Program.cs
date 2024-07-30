@@ -15,7 +15,7 @@ using thetaedgecloud_the_ai_factor.StreamProcessor;
 using WebSocketSharp.Server;
 
 var builder = WebApplication.CreateBuilder(args);
-
+/*
 var peer = new PeerStream(builder.Configuration);
 var fileBuffer = new byte[1024 * 1024];
 foreach (var fileName in Directory.GetFiles(@"C:\Users\Isaack\Downloads\videos\video-images", "*.jpg"))
@@ -36,7 +36,7 @@ foreach (var fileName in Directory.GetFiles(@"C:\Users\Isaack\Downloads\videos\v
 
 Console.WriteLine("Finished");
 Console.WriteLine("Events: "+ JsonSerializer.Serialize(peer.GetEvents()));
-return;
+return; */
 /*
 return;*/
 /*var imgClass = new ImageClassification();

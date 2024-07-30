@@ -14,7 +14,14 @@ public class ImageClassification
 
     public ImageClassification()
     {
-        _inferenceSession = new InferenceSession(modelFilePath);
+        try
+        {
+            _inferenceSession = new InferenceSession(modelFilePath);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     public Prediction? Classify(Image<Rgb24> frameImage)
