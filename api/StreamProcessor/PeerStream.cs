@@ -13,15 +13,17 @@ public class PeerStream
     private int _lastFrameCounter = 0;
     private int _framesPerSecond = 0;
     private readonly List<PeerEvent> _peerEvents = new List<PeerEvent>();
-    private readonly AiAssistant _aiAssistant;
+    private readonly List<AiAssistant> _aiAssistants = new List<AiAssistant>();
     private readonly TimeSpan _classificationDelay = TimeSpan.FromSeconds(2.5);
 
     public PeerStream(IConfiguration configuration)
     {
         var promptApiBaseUrl = configuration["Cloudflare:AI:ApiUrl"];
 
-        _aiAssistant = new AiAssistant(promptApiBaseUrl, configuration["Cloudflare:AI:TokenSecret"],
-            "You are an impatient judge in a music competition. You comment the performance of the artist playing with one short sentence. ");
+        _aiAssistants.Add(new AiAssistant(promptApiBaseUrl, configuration["Cloudflare:AI:TokenSecret"],
+            "You are an impatient judge in a music competition. You comment the performance of the artist playing with one short sentence.", "Julie"));
+        _aiAssistants.Add(new AiAssistant(promptApiBaseUrl, configuration["Cloudflare:AI:TokenSecret"],
+            "You are a very helpful judge in a music competition. You give suggestions to the artist playing for how to improve with one short sentence.","Andrew"));
     }
 
     public async Task ProcessFrame(FileStream fileStream)
@@ -58,14 +60,16 @@ public class PeerStream
                             ? $"Now a {eventObject} is seen"
                             : $"Now the {eventObject} is back";
                         AddEvent(PeerEventType.AIPrompt, aiPrompt);
-                        var promptResponse = await _aiAssistant.Prompt(aiPrompt);
+                        foreach (var aiAssistant in _aiAssistants)
+                        {
+                            var promptResponse = await aiAssistant.Prompt(aiPrompt);
 
-                        AddEvent(PeerEventType.AIResponse, promptResponse.Result.Response);
-                        Console.WriteLine($"Judge: {promptResponse.Result.Response}                                    ");
+                            AddEvent(PeerEventType.AIResponse, promptResponse.Result.Response);
+                            Console.WriteLine($"{aiAssistant.Name} Judge: {promptResponse.Result.Response} ");
+                        }
                     });
                 }
 
-                Console.SetCursorPosition(20, 0);
                 Console.WriteLine(
                     $"Detected: {imgPrediction?.Label ?? "None"} {(imgPrediction?.Confidence ?? 0) * 100}%            ");
             }

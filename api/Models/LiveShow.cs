@@ -7,4 +7,5 @@ public class LiveShow
     public string PlayerUri { get; set; }
     public string PlaybackUri { get; set; }
     public string Status { get; set; }
+    public string Date { get; set; }
 }

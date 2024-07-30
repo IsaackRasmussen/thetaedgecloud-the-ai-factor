@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using FFmpeg.AutoGen;
 using TinyJson;
 
 namespace thetaedgecloud_the_ai_factor.StreamProcessor;
@@ -9,7 +10,7 @@ public class AiAssistant
     private readonly string _baseApiUrl;
     private readonly string _apiTokenSecret;
 
-    public AiAssistant(string baseApiUrl, string apiTokenSecret, string systemContent)
+    public AiAssistant(string baseApiUrl, string apiTokenSecret, string systemContent, string name)
     {
         _baseApiUrl = baseApiUrl;
         _apiTokenSecret = apiTokenSecret;
@@ -19,7 +20,10 @@ public class AiAssistant
             Role = "system",
             Content = systemContent
         });
+        Name = name;
     }
+
+    public string Name { get; private set; }
 
     public async Task<PromptResponse> Prompt(string promptMessage)
     {

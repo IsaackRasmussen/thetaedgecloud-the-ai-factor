@@ -50,4 +50,23 @@ public class ShowsController: Controller
         
         return Ok(Enumerable.Empty<LiveShow>());
     }
+
+    [HttpGet("[Controller]/Past")]
+    public async Task<ActionResult> GetPastShows()
+    {
+        var pastShows = new List<LiveShow>();
+        
+        foreach(var showFileName in Directory.GetFiles("./pastshows","*.json"))
+        {
+            var fInfo = new FileInfo(showFileName);
+            
+            pastShows.Add(new LiveShow()
+            {
+                Name = "The best performance ever",
+                Status = "Past",
+                Date = fInfo.CreationTimeUtc.ToString("yyyy-MM-ddTHH:mm:ssZ") 
+            });
+        }
+        return Ok(pastShows);
+    }
 }
