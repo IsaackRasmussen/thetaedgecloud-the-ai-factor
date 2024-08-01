@@ -33,7 +33,7 @@ public class ShowsController: Controller
                 var liveStreams = await client.GetFromJsonAsync<ThetaEdgeLiveStreams>(
                     $"{_baseApiUrl}/service_account/{_baseApiKey}/streams");
 
-                return Ok(liveStreams.Body.Streams.Select((stream) => new LiveShow
+                return Ok(liveStreams.Body.Streams.Select((stream) => new StreamShow
                 {
                     Name = stream.Name,
                      Id = stream.Id,
@@ -48,25 +48,37 @@ public class ShowsController: Controller
             Console.WriteLine(e);
         }
         
-        return Ok(Enumerable.Empty<LiveShow>());
+        return Ok(Enumerable.Empty<StreamShow>());
     }
 
     [HttpGet("[Controller]/Past")]
     public async Task<ActionResult> GetPastShows()
     {
-        var pastShows = new List<LiveShow>();
-        
-        foreach(var showFileName in Directory.GetFiles("./pastshows","*.json"))
+        try
         {
-            var fInfo = new FileInfo(showFileName);
-            
-            pastShows.Add(new LiveShow()
+            using (var client = new HttpClient())
             {
-                Name = "The best performance ever",
-                Status = "Past",
-                Date = fInfo.CreationTimeUtc.ToString("yyyy-MM-ddTHH:mm:ssZ") 
-            });
+                client.DefaultRequestHeaders.Add("x-tva-sa-id",_baseApiKey);
+                client.DefaultRequestHeaders.Add("x-tva-sa-secret",_baseApiSecret);
+                var streams = await client.GetFromJsonAsync<ThetaEdgeStreams>(
+                    $"{_baseApiUrl}/video/{_baseApiKey}/list?number=100'");
+
+                return Ok(streams.Body.Videos.Select((stream) => new StreamShow
+                {
+                    Name = stream.Name ?? stream.FileName,
+                    Id = stream.Id,
+                    PlayerUri = stream.PlayerUri,
+                    PlaybackUri = stream.PlaybackUri,
+                    Status = stream.Status,
+                    Date = stream.UpdateTime ?? stream.CreateTime
+                }));
+            }
         }
-        return Ok(pastShows);
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+
+        return Ok(Enumerable.Empty<StreamShow>());
     }
 }

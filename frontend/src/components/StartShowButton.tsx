@@ -81,7 +81,7 @@ const StartShowButton = () => {
   return (
     <>
       <Button
-        style={{ width: "10em", height: "5em", fontSize: "3em" }}
+        style={{ width: "10em", height: "5em", fontSize: "3em", maxWidth:"80%" }}
         radius="lg"
         disableRipple
         className="bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg relative overflow-visible rounded-full hover:-translate-y-1 px-12 shadow-xl bg-background/30 after:content-[''] after:absolute after:rounded-full after:inset-0 after:bg-background/40 after:z-[-1] after:transition after:!duration-500 hover:after:scale-150 hover:after:opacity-0"

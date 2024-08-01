@@ -19,7 +19,9 @@ const LiveShows = () => {
     error,
     isValidating,
   } = useSWR(import.meta.env.VITE_API_URL + "/shows/live", fetcher, {
-    refreshInterval: 1000,
+    refreshInterval: 30000,
+    revalidateIfStale: false,
+    keepPreviousData: true,
   });
 
   // Handles error and loading state
@@ -28,7 +30,7 @@ const LiveShows = () => {
     return <div className="Loading">Loading...</div>;
 
   return (
-    <div style={{ display: "flex", gap: "1em" }}>
+    <div style={{ display: "flex", gap: "1em" ,width:"100%"}}>
       {liveShows &&
         liveShows.map((show: any, index: number) => (
           <Card

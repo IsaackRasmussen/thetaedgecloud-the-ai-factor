@@ -1,6 +1,6 @@
 namespace thetaedgecloud_the_ai_factor.Models;
 
-public class LiveShow
+public class StreamShow
 {
     public string Name { get; set; }
     public string Id { get; set; }
