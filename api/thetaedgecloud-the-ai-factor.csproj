@@ -7,6 +7,7 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <RootNamespace>thetaedgecloud_the_ai_factor</RootNamespace>
     <UserSecretsId>3333cecc-cd66-4741-b623-0421f854ad3e</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +24,12 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
     <PackageReference Include="System.Numerics.Tensors" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
   </ItemGroup>
 
 </Project>
