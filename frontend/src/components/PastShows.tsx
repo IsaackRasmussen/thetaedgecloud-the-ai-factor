@@ -10,7 +10,6 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import StreamPlayer from "./StreamPlayer";
-import { DateFormatter } from "@internationalized/date";
 
 // created function to handle API request
 const fetcher = (...args: Parameters<typeof fetch>) =>

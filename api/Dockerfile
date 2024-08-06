@@ -19,8 +19,8 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "thetaedgecloud-the-ai-factor.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-WORKDIR "/src/api"
-ADD onnx_models /app/publish/onnx_models
+#WORKDIR "/src/api"
+#ADD onnx_models /app/publish/onnx_models
 
 FROM base AS final
 WORKDIR /app
