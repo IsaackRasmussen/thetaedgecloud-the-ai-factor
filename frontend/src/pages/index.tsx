@@ -14,9 +14,7 @@ export default function IndexPage() {
           <LiveShows />
         </div>
 
-        <div>
-          <StartShowButton />
-        </div>
+        <StartShowButton />
 
         <div>
           <PastShows />
