@@ -1,3 +1,4 @@
+import { useState } from "react";
 import useSWR from "swr";
 import {
   Table,
@@ -8,25 +9,25 @@ import {
   TableCell,
   useDisclosure,
 } from "@nextui-org/react";
-import { DateInput } from "@nextui-org/react";
-import { parseAbsoluteToLocal } from "@internationalized/date";
 import StreamPlayer from "./StreamPlayer";
+import { DateFormatter } from "@internationalized/date";
 
 // created function to handle API request
 const fetcher = (...args: Parameters<typeof fetch>) =>
   fetch(...args).then((res) => res.json());
 
 const PastShows = () => {
+  const [currentShow, setCurrentShow] = useState(false);
   const {
     data: pastShows,
     error,
     isValidating,
   } = useSWR(import.meta.env.VITE_API_URL + "/shows/past", fetcher, {
-    refreshInterval: 30000,
+    refreshInterval: 1000,
     revalidateIfStale: false,
     keepPreviousData: true,
   });
-  const { isOpen, onOpen } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   // Handles error and loading state
   if (error) return <div className="failed">failed to load</div>;
@@ -35,14 +36,19 @@ const PastShows = () => {
 
   return (
     <div>
-      <StreamPlayer isOpen={isOpen} streamShow={{ name: "test" }} />
+      <StreamPlayer
+        isOpen={isOpen}
+        onClose={onClose}
+        streamShow={currentShow}
+      />
       <Table
         selectionMode="single"
         fullWidth={true}
         defaultSelectedKeys={["2"]}
-        aria-label="Example static collection table"
-        onRowAction={(key: React.Key) => {
-          console.log("Test", key);
+        aria-label="Previously recorded shows"
+        onCellAction={(key: React.Key) => {
+          const showIndex = parseInt(key.toString().split(".")[0]);
+          setCurrentShow(pastShows[showIndex as number]);
           onOpen();
         }}
       >
@@ -55,13 +61,7 @@ const PastShows = () => {
             pastShows.map((show: any, index: number) => (
               <TableRow key={index}>
                 <TableCell>{show.name}</TableCell>
-                <TableCell>
-                  <DateInput
-                    granularity="minute"
-                    label="Date and time"
-                    value={parseAbsoluteToLocal(show.date)}
-                  />
-                </TableCell>
+                <TableCell>{show.date}</TableCell>
               </TableRow>
             ))}
         </TableBody>

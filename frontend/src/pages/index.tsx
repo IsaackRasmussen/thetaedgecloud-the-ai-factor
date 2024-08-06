@@ -21,6 +21,10 @@ export default function IndexPage() {
         <div>
           <PastShows />
         </div>
+
+        <div>
+          <i>Updated 6th Aug. 2024</i>
+        </div>
       </section>
     </DefaultLayout>
   );

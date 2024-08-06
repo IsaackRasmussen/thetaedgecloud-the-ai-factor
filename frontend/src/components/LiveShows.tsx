@@ -19,7 +19,7 @@ const LiveShows = () => {
     error,
     isValidating,
   } = useSWR(import.meta.env.VITE_API_URL + "/shows/live", fetcher, {
-    refreshInterval: 30000,
+    refreshInterval: 1000,
     revalidateIfStale: false,
     keepPreviousData: true,
   });
